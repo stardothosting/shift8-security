@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 // Register admin scripts for custom fields
 function load_shift8_security_wp_admin_style() {
         // admin always last

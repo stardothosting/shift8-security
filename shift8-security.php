@@ -9,9 +9,15 @@
  * License: GPLv3
  */
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+
 require_once(plugin_dir_path(__FILE__).'components/enqueuing.php' );
 require_once(plugin_dir_path(__FILE__).'components/settings.php' );
 require_once(plugin_dir_path(__FILE__).'components/functions.php' );
+require_once(plugin_dir_path(__FILE__).'components/rules.php' );
+require_once(plugin_dir_path(__FILE__).'components/Util_Environment.php' );
+require_once(plugin_dir_path(__FILE__).'components/Util_Rules.php' );
 
 
 // Admin welcome page
