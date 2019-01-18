@@ -192,6 +192,18 @@ class Util_Environment {
     }
 
     /**
+     * Converts win path to unix
+     *
+     * @param string  $path
+     * @return string
+     */
+    static public function normalize_path( $path ) {
+        $path = preg_replace( '~[/\\\]+~', '/', $path );
+        $path = rtrim( $path, '/' );
+
+        return $path;
+    }
+    /**
      * Returns absolute path to blog install dir
      *
      * Example:
@@ -265,5 +277,42 @@ class Util_Environment {
         $temp = isset( $sig[1] ) ? explode( ' ', $sig[1] ) : array( '0' );
         $version = $temp[0];
         return $version;
+    }
+
+    /**
+    * Verifies if a URL exists
+    *
+    * @return boolean
+    */
+    static public function url_exists($url){
+        $args = array(
+            'timeout' => 1,
+        );
+        if (!$fp = wp_remote_get($url, $args)) return false;
+        return true;
+    }
+
+    /**
+    * Prints dynamic admin notices
+    *
+    * @return string
+    */
+    static public function admin_notice_func($message = '') {
+        $output = '<div class="notice notice-error is-not-dismissible"><p>' . $message . '</p></div>';
+        $func = function() use($output) { print $output; };
+        return $func;
+    }
+
+    /**
+    * Triggers dynamic admin notices
+    *
+    * @return nothing
+    */
+    static public function admin_notice($current_url, $message){
+        // Only display notices if your in the plugin settings
+        if (strpos($current_url, 'page=shift8-security') !== false) {
+            $func = Util_Environment::admin_notice_func($message);
+            add_action('admin_notices', $func);
+        }
     }
 }

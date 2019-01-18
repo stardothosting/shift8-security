@@ -3,6 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Function to initialize & check for session 
 function shift8_security_init() {
+    $die_now = false;
     // Initiate logic only if enabled
     if (shift8_security_check_options()) {
         // Get all options configured as array
@@ -22,25 +23,38 @@ function shift8_security_init() {
             $current_url = rtrim($_SERVER['REQUEST_URI'], '/');
             if ( strpos($current_url, '/xmlrpc.php') !== false ) {
                 http_response_code(404);
-                die();
+                $die_now = true;
             }
         }
 
         // Webserver based logic for rule implementation
         $webserver = Util_Environment::which_webserver();
+
         switch ($webserver) {
             case 'apache':
+            case 'litespeed':
                 break;
             case 'nginx':
-
-                break;
-            case 'lighttpd':
-
+                if($shift8_options['wpscan_basic'] == 'on') { }
+                if($shift8_options['wpscan_eap'] == 'on') {
+                    if(Util_Environment::url_exists(S8SEC_TEST_README_URL)) {
+                        Util_Environment::admin_notice($current_url, '
+                            Nginx is not configured to block or obfuscate WPScan plugin enumeration.
+                            <pre>
+                            code header_remove
+                            </pre>
+                            ');
+                    }
+                }
                 break;
             case 'iis':
 
                 break;
         }
+    }
+
+    if ($die_now) {
+        die();
     }
 }
 
