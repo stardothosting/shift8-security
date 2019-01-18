@@ -284,12 +284,15 @@ class Util_Environment {
     *
     * @return boolean
     */
-    static public function url_exists($url){
+    static public function url_check($url){
         $args = array(
-            'timeout' => 1,
+            'timeout' => 5,
+            'sslverify' => false,
         );
-        if (!$fp = wp_remote_get($url, $args)) return false;
-        return true;
+        $response = wp_remote_get($url, $args);
+        $response_code = wp_remote_retrieve_response_code($response);
+        if (is_array($response) && $response_code >= 400) return true;
+        return false;
     }
 
     /**
@@ -297,8 +300,9 @@ class Util_Environment {
     *
     * @return string
     */
-    static public function admin_notice_func($message = '') {
-        $output = '<div class="notice notice-error is-not-dismissible"><p>' . $message . '</p></div>';
+    static public function admin_notice_func($dismissable, $notice_type = 'notice-error', $message = '') {
+        $dismiss = ($dismissable ? 'is-dismissable' : 'is-not-dismissable');
+        $output = '<div class="notice ' . $notice_type . ' ' . $dismiss . '"><p>' . $message . '</p></div>';
         $func = function() use($output) { print $output; };
         return $func;
     }
@@ -308,10 +312,10 @@ class Util_Environment {
     *
     * @return nothing
     */
-    static public function admin_notice($current_url, $message){
+    static public function admin_notice($current_url, $dismissable, $message){
         // Only display notices if your in the plugin settings
         if (strpos($current_url, 'page=shift8-security') !== false) {
-            $func = Util_Environment::admin_notice_func($message);
+            $func = Util_Environment::admin_notice_func($dismissable, $message);
             add_action('admin_notices', $func);
         }
     }

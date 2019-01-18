@@ -26,24 +26,41 @@ function shift8_security_init() {
                 $die_now = true;
             }
         }
+    }
 
+    // If die_now is triggered, die
+    if ($die_now) die();
+}
+
+// Functions for web service dependent security 
+function shift8_security_loaded() {
+    if (shift8_security_check_options()) {
+        // Get all options configured as array
+        $shift8_options = shift8_security_check_options();
         // Webserver based logic for rule implementation
         $webserver = Util_Environment::which_webserver();
-
         switch ($webserver) {
             case 'apache':
             case 'litespeed':
                 break;
             case 'nginx':
+                // WPScan Basic
                 if($shift8_options['wpscan_basic'] == 'on') { }
+
+                // WPScan Plugin Enumeration
                 if($shift8_options['wpscan_eap'] == 'on') {
-                    if(Util_Environment::url_exists(S8SEC_TEST_README_URL)) {
-                        Util_Environment::admin_notice($current_url, '
-                            Nginx is not configured to block or obfuscate WPScan plugin enumeration.
+                    if(!Util_Environment::url_check(S8SEC_TEST_README_URL)) {
+                        Util_Environment::admin_notice($current_url, false, '
+                            Nginx is not configured to block or obfuscate WPScan plugin enumeration. Please add the following to your NGINX configuration : 
                             <pre>
-                            code header_remove
+                            location ~* ^/wp-content/plugins/.+\.(txt|log)$ {
+                                deny all;
+                                error_page 403 =404 / ;
+                            }
                             </pre>
                             ');
+                    } else {
+                        Util_Environment::admin_notice($current_url, false, 'NGINX is setup correctly for WPScan plugin enumeration.');
                     }
                 }
                 break;
@@ -52,15 +69,12 @@ function shift8_security_init() {
                 break;
         }
     }
-
-    if ($die_now) {
-        die();
-    }
 }
 
 // Initialize only if enabled
 if (shift8_security_check_enabled()) {
     add_action('init', 'shift8_security_init', 1);
+    add_action('admin_init', 'shift8_security_loaded');
 }
 
 // Validate admin options
