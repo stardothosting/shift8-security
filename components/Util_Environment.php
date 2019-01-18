@@ -302,7 +302,7 @@ class Util_Environment {
     */
     static public function admin_notice_func($dismissable, $notice_type = 'notice-error', $message = '') {
         $dismiss = ($dismissable ? 'is-dismissable' : 'is-not-dismissable');
-        $output = '<div class="notice ' . $notice_type . ' ' . $dismiss . '"><p>' . $message . '</p></div>';
+        $output = '<div class="notice ' . $notice_type . ' ' . $dismiss . '"><p>' . $message . '</p>' . $dismiss_button . '</div>';
         $func = function() use($output) { print $output; };
         return $func;
     }
@@ -312,10 +312,10 @@ class Util_Environment {
     *
     * @return nothing
     */
-    static public function admin_notice($current_url, $dismissable, $message){
+    static public function admin_notice($current_url, $dismissable, $notice_type, $message){
         // Only display notices if your in the plugin settings
         if (strpos($current_url, 'page=shift8-security') !== false) {
-            $func = Util_Environment::admin_notice_func($dismissable, $message);
+            $func = Util_Environment::admin_notice_func($dismissable, $notice_type, $message);
             add_action('admin_notices', $func);
         }
     }
