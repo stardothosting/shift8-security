@@ -17,7 +17,7 @@ require_once(plugin_dir_path(__FILE__).'components/settings.php' );
 require_once(plugin_dir_path(__FILE__).'components/functions.php' );
 require_once(plugin_dir_path(__FILE__).'components/rules.php' );
 require_once(plugin_dir_path(__FILE__).'components/Util_Environment.php' );
-require_once(plugin_dir_path(__FILE__).'components/Util_Rules.php' );
+require_once(plugin_dir_path(__FILE__).'components/Util_Rule.php' );
 
 
 // Admin welcome page
