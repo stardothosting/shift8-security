@@ -18,6 +18,7 @@ You can view three example sites where this plugin is live :
 - Example Site 2 : [Web Design in Toronto](https://www.shift8web.ca "Web Design in Toronto")
 - Example Site 3 : [Dope Mail](https://dopemail.com "Buy Weed Online")
 
+To read more about how this plugin works, please read our [blog post detailing how it works](https://www.shift8web.ca/2019/01/how-to-block-your-wordpress-site-from-being-scanned-by-wpscan-with-nginx/ "Toronto Website design")
 ## Features
 
 - Restricts or blocks the availability of plugin readme files for enumeration & version detection 
