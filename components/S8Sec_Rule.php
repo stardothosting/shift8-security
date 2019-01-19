@@ -1,5 +1,5 @@
 <?php
-class Util_Rule {
+class S8Sec_Rule {
 
     /**
      * Removes empty elements
@@ -22,7 +22,7 @@ class Util_Rule {
         $path = $config->get_string( 'config.path' );
 
         if ( !$path ) {
-            $path = Util_Environment::site_path() . 'nginx.conf';
+            $path = S8Sec_Environment::site_path() . 'nginx.conf';
         }
 
         return $path;
@@ -35,12 +35,12 @@ class Util_Rule {
      */
     static public function get_wproot_path() {
         switch ( true ) {
-        case Util_Environment::is_apache():
-        case Util_Environment::is_litespeed():
-            return Util_Environment::content_path() . '.htaccess';
+        case S8Sec_Environment::is_apache():
+        case S8Sec_Environment::is_litespeed():
+            return S8Sec_Environment::content_path() . '.htaccess';
 
-        case Util_Environment::is_nginx():
-            return Util_Rule::get_nginx_rules_path();
+        case S8Sec_Environment::is_nginx():
+            return S8Sec_Rule::get_nginx_rules_path();
         }
 
         return false;
@@ -53,12 +53,12 @@ class Util_Rule {
      */
     static public function get_wpcontent_path() {
         switch ( true ) {
-        case Util_Environment::is_apache():
-        case Util_Environment::is_litespeed():
-            return Util_Environment::content_path() . '.htaccess';
+        case S8Sec_Environment::is_apache():
+        case S8Sec_Environment::is_litespeed():
+            return S8Sec_Environment::content_path() . '.htaccess';
 
-        case Util_Environment::is_nginx():
-            return Util_Rule::get_nginx_rules_path();
+        case S8Sec_Environment::is_nginx():
+            return S8Sec_Rule::get_nginx_rules_path();
         }
 
         return false;
@@ -89,7 +89,7 @@ class Util_Rule {
     static public function clean_rules( $rules ) {
         $rules = preg_replace( '~[\r\n]+~', "\n", $rules );
         $rules = preg_replace( '~^\s+~m', '', $rules );
-        $rules = Util_Rule::trim_rules( $rules );
+        $rules = S8Sec_Rule::trim_rules( $rules );
 
         return $rules;
     }
@@ -103,10 +103,10 @@ class Util_Rule {
      * @return string
      */
     static public function erase_rules( $rules, $start, $end ) {
-        $r = '~' . Util_Environment::preg_quote( $start ) . "\n.*?" . Util_Environment::preg_quote( $end ) . "\n*~s";
+        $r = '~' . S8Sec_Environment::preg_quote( $start ) . "\n.*?" . S8Sec_Environment::preg_quote( $end ) . "\n*~s";
 
         $rules = preg_replace( $r, '', $rules );
-        $rules = Util_Rule::trim_rules( $rules );
+        $rules = S8Sec_Rule::trim_rules( $rules );
 
         return $rules;
     }
@@ -120,13 +120,13 @@ class Util_Rule {
      * @return int
      */
     static public function has_rules( $rules, $start, $end ) {
-        return preg_match( '~' . Util_Environment::preg_quote( $start ) . "\n.*?" . Util_Environment::preg_quote( $end ) . "\n*~s", $rules );
+        return preg_match( '~' . S8Sec_Environment::preg_quote( $start ) . "\n.*?" . S8Sec_Environment::preg_quote( $end ) . "\n*~s", $rules );
     }
 
   /**
      *
      *
-     * @param Util_Environment_Exceptions $exs
+     * @param S8Sec_Environment_Exceptions $exs
      * @param string  $path
      * @param string  $rules
      * @param string  $start
@@ -147,7 +147,7 @@ class Util_Rule {
             if ( !$rules_present )
                 return;
         } else {
-            $rules_missing = ( strstr( Util_Rule::clean_rules( $data ), Util_Rule::clean_rules( $rules ) ) === false );
+            $rules_missing = ( strstr( S8Sec_Rule::clean_rules( $data ), S8Sec_Rule::clean_rules( $rules ) ) === false );
             if ( !$rules_missing )
                 return;
         }
@@ -174,23 +174,23 @@ class Util_Rule {
         }
 
         if ( $replace_start !== false ) {
-            $data = Util_Rule::trim_rules( substr_replace( $data, $rules, $replace_start, $replace_length ) );
+            $data = S8Sec_Rule::trim_rules( substr_replace( $data, $rules, $replace_start, $replace_length ) );
         } else {
-            $data = Util_Rule::trim_rules( $data . $rules );
+            $data = S8Sec_Rule::trim_rules( $data . $rules );
         }
 
-        if ( strpos( $path, W3TC_CACHE_DIR ) === false || Util_Environment::is_nginx() ) {
+        if ( strpos( $path, W3TC_CACHE_DIR ) === false || S8Sec_Environment::is_nginx() ) {
             try {
-                Util_WpFile::write_to_file( $path, $data );
-            } catch ( Util_WpFile_FilesystemOperationException $ex ) {
+                S8Sec_WpFile::write_to_file( $path, $data );
+            } catch ( S8Sec_WpFile_FilesystemOperationException $ex ) {
                 if ( $replace_start !== false )
-                    $exs->push( new Util_WpFile_FilesystemModifyException(
+                    $exs->push( new S8Sec_WpFile_FilesystemModifyException(
                             $ex->getMessage(), $ex->credentials_form(),
                             sprintf( __( 'Edit file <strong>%s
                             </strong> and replace all lines between and including <strong>%s</strong> and
                             <strong>%s</strong> markers with:', 'w3-total-caceh' ), $path, $start, $end ), $path, $rules ) );
                 else
-                    $exs->push( new Util_WpFile_FilesystemModifyException(
+                    $exs->push( new S8Sec_WpFile_FilesystemModifyException(
                             $ex->getMessage(), $ex->credentials_form(),
                             sprintf( __( 'Edit file <strong>%s</strong> and add the following rules
                                     above the WordPress directives:', 'w3-total-cache' ),
@@ -199,21 +199,21 @@ class Util_Rule {
             }
         } else {
             if ( !@file_exists( dirname( $path ) ) ) {
-                Util_File::mkdir_from( dirname( $path ), W3TC_CACHE_DIR );
+                S8Sec_File::mkdir_from( dirname( $path ), W3TC_CACHE_DIR );
             }
 
             if ( !@file_put_contents( $path, $data ) ) {
                 try {
-                    Util_WpFile::delete_folder( dirname( $path ), '',
+                    S8Sec_WpFile::delete_folder( dirname( $path ), '',
                         $_SERVER['REQUEST_URI'] );
-                } catch ( Util_WpFile_FilesystemOperationException $ex ) {
+                } catch ( S8Sec_WpFile_FilesystemOperationException $ex ) {
                     $exs->push( $ex );
                     return;
                 }
             }
         }
 
-        Util_Rule::after_rules_modified();
+        S8Sec_Rule::after_rules_modified();
     }
 
     /**
@@ -229,13 +229,13 @@ class Util_Rule {
         if ( strstr( $data, $start ) === false )
             return;
 
-        $data = Util_Rule::erase_rules( $data, $start,
+        $data = S8Sec_Rule::erase_rules( $data, $start,
             $end );
 
         try {
-            Util_WpFile::write_to_file( $path, $data );
-        } catch ( Util_WpFile_FilesystemOperationException $ex ) {
-            $exs->push( new Util_WpFile_FilesystemModifyException(
+            S8Sec_WpFile::write_to_file( $path, $data );
+        } catch ( S8Sec_WpFile_FilesystemOperationException $ex ) {
+            $exs->push( new S8Sec_WpFile_FilesystemModifyException(
                     $ex->getMessage(), $ex->credentials_form(),
                     sprintf( __( 'Edit file <strong>%s</strong> and remove all lines between and including <strong>%s</strong>
                 and <strong>%s</strong> markers.', 'w3-total-cache' ), $path, $start, $end ), $path ) );
@@ -248,10 +248,10 @@ class Util_Rule {
      * @return bool
      */
     static public function can_check_rules() {
-        return Util_Environment::is_apache() ||
-            Util_Environment::is_litespeed() ||
-            Util_Environment::is_nginx() ||
-            Util_Environment::is_iis();
+        return S8Sec_Environment::is_apache() ||
+            S8Sec_Environment::is_litespeed() ||
+            S8Sec_Environment::is_nginx() ||
+            S8Sec_Environment::is_iis();
     }
 
     /**

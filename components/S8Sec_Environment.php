@@ -1,5 +1,5 @@
 <?php
-class Util_Environment {
+class S8Sec_Environment {
     
     /**
      * Check if URL is valid
@@ -19,7 +19,7 @@ class Util_Environment {
     static public function is_https() {
         switch ( true ) {
         case ( isset( $_SERVER['HTTPS'] ) &&
-                Util_Environment::to_boolean( $_SERVER['HTTPS'] ) ):
+                S8Sec_Environment::to_boolean( $_SERVER['HTTPS'] ) ):
         case ( isset( $_SERVER['SERVER_PORT'] ) &&
                 (int) $_SERVER['SERVER_PORT'] == 443 ):
         case ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) &&
@@ -119,7 +119,7 @@ class Util_Environment {
         $url = preg_replace( '~(https?:)?//~i', '', $url );
         $url = preg_replace( '~^www\.~i', '', $url );
 
-        $regexp = '(https?:)?//(www\.)?' . Util_Environment::preg_quote( $url );
+        $regexp = '(https?:)?//(www\.)?' . S8Sec_Environment::preg_quote( $url );
 
         return $regexp;
     }
@@ -165,9 +165,9 @@ class Util_Environment {
 
         if ( !empty( $_SERVER['SCRIPT_FILENAME'] ) &&
             !empty( $_SERVER['PHP_SELF'] ) ) {
-            $script_filename = Util_Environment::normalize_path(
+            $script_filename = S8Sec_Environment::normalize_path(
                 $_SERVER['SCRIPT_FILENAME'] );
-            $php_self = Util_Environment::normalize_path(
+            $php_self = S8Sec_Environment::normalize_path(
                 $_SERVER['PHP_SELF'] );
             if ( substr( $script_filename, -strlen( $php_self ) ) == $php_self ) {
                 $document_root = substr( $script_filename, 0, -strlen( $php_self ) );
@@ -178,11 +178,11 @@ class Util_Environment {
 
         if ( !empty( $_SERVER['PATH_TRANSLATED'] ) ) {
             $document_root = substr(
-                Util_Environment::normalize_path( $_SERVER['PATH_TRANSLATED'] ),
+                S8Sec_Environment::normalize_path( $_SERVER['PATH_TRANSLATED'] ),
                 0,
-                -strlen( Util_Environment::normalize_path( $_SERVER['PHP_SELF'] ) ) );
+                -strlen( S8Sec_Environment::normalize_path( $_SERVER['PHP_SELF'] ) ) );
         } elseif ( !empty( $_SERVER['DOCUMENT_ROOT'] ) ) {
-            $document_root = Util_Environment::normalize_path( $_SERVER['DOCUMENT_ROOT'] );
+            $document_root = S8Sec_Environment::normalize_path( $_SERVER['DOCUMENT_ROOT'] );
         } else {
             $document_root = ABSPATH;
         }
@@ -219,7 +219,7 @@ class Util_Environment {
     static public function site_root() {
         $site_root = ABSPATH;
         $site_root = realpath( $site_root );
-        $site_root = Util_Environment::normalize_path( $site_root );
+        $site_root = S8Sec_Environment::normalize_path( $site_root );
 
         return $site_root;
     }
@@ -237,7 +237,7 @@ class Util_Environment {
      * @return string
      */
     static public function site_url_uri() {
-        return Util_Environment::url_to_uri( site_url() ) . '/';
+        return S8Sec_Environment::url_to_uri( site_url() ) . '/';
     }
 
     /**
@@ -315,7 +315,7 @@ class Util_Environment {
     static public function admin_notice($current_url, $dismissable, $notice_type, $message){
         // Only display notices if your in the plugin settings
         if (strpos($current_url, 'page=shift8-security') !== false) {
-            $func = Util_Environment::admin_notice_func($dismissable, $notice_type, $message);
+            $func = S8Sec_Environment::admin_notice_func($dismissable, $notice_type, $message);
             add_action('admin_notices', $func);
         }
     }

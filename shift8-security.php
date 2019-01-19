@@ -16,8 +16,8 @@ require_once(plugin_dir_path(__FILE__).'components/enqueuing.php' );
 require_once(plugin_dir_path(__FILE__).'components/settings.php' );
 require_once(plugin_dir_path(__FILE__).'components/functions.php' );
 require_once(plugin_dir_path(__FILE__).'components/rules.php' );
-require_once(plugin_dir_path(__FILE__).'components/Util_Environment.php' );
-require_once(plugin_dir_path(__FILE__).'components/Util_Rule.php' );
+require_once(plugin_dir_path(__FILE__).'components/S8Sec_Environment.php' );
+require_once(plugin_dir_path(__FILE__).'components/S8Sec_Rule.php' );
 
 
 // Admin welcome page

@@ -35,15 +35,6 @@ function shift8_security_init() {
                 $die_now = true;
             }
 
-            // Disable wp-admin/install.php
-            wp_delete_file( WP_ROOT_DIR . '/wp-admin/install.php');
-
-            // Disable wp-admin/upgrade.php
-            if ( strpos($current_url, '/wp-admin/upgrade.php') !== false ) {
-                http_response_code(404);
-                $die_now = true;
-            }
-
             // Disable RSS Feed
             add_action('do_feed', 'shift8_security_disable_feed', 1);
             add_action('do_feed_rdf', 'shift8_security_disable_feed', 1);
@@ -90,7 +81,7 @@ function shift8_security_loaded() {
         $current_url = rtrim($_SERVER['REQUEST_URI'], '/');
         
         // Webserver based logic for rule implementation
-        $webserver = Util_Environment::which_webserver();
+        $webserver = S8Sec_Environment::which_webserver();
         
         switch ($webserver) {
             case 'apache':
@@ -102,11 +93,8 @@ function shift8_security_loaded() {
 
                 // WPScan Plugin Enumeration
                 if($shift8_options['wpscan_eap'] == 'on') {
-                    if(!Util_Environment::url_check(S8SEC_TEST_README_URL)) {
-                        var_dump('test');
-                        exit(0);
-                        die();
-                        Util_Environment::admin_notice($current_url, false, 'notice-error', '
+                    if(!S8Sec_Environment::url_check(S8SEC_TEST_README_URL)) {
+                        S8Sec_Environment::admin_notice($current_url, false, 'notice-error', '
                             Nginx is not configured to block or obfuscate WPScan plugin enumeration. Please add the following to your NGINX configuration : 
                             <pre>
                             location ~* ^/wp-content/plugins/.+\.(txt|log|md)$ {
@@ -116,7 +104,7 @@ function shift8_security_loaded() {
                             </pre>
                             ');
                     } else {
-                        Util_Environment::admin_notice($current_url, true, 'notice-success', 'NGINX is setup correctly for WPScan plugin enumeration.');
+                        S8Sec_Environment::admin_notice($current_url, true, 'notice-success', 'NGINX is setup correctly for WPScan plugin enumeration.');
                     }
                 }
                 break;
@@ -134,7 +122,7 @@ function shift8_security_disable_feed() {
 
 // Remove wp version param from any enqueued scripts
 function shift8_security_remove_wp_ver_css_js( $src ) {
-    //if ( strpos( $src, 'ver=' . get_bloginfo( 'version' ) ) )
+    if ( strpos( $src, 'ver=' . get_bloginfo( 'version' ) ) )
         $src = remove_query_arg( 'ver', $src );
     return $src;
 }
