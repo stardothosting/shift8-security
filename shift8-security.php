@@ -38,7 +38,7 @@ function shift8_security_settings_page() {
 <div class="wrap">
 <h2>Shift8 Security Settings</h2>
 <?php if (is_admin()) { 
-$active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'core_options';
+$active_tab = (esc_attr($_GET[ 'tab' ]) != null ? esc_attr($_GET[ 'tab' ]) : 'core_options');
 $plugin_data = get_plugin_data( __FILE__ );
 $plugin_name = $plugin_data['TextDomain'];
 ?>
