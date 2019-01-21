@@ -1,14 +1,14 @@
 # Shift8 Security
 * Contributors: shift8
 * Donate link: https://www.shift8web.ca
-* Tags: security, probe, scan, wpscan, block wpscan, block scan, scanner block, block probe
+* Tags: security, probe, scan, wpscan, block wpscan, block scan, scanner block, block probe, 2fa, FreeOTP, FOTP
 * Requires at least: 3.0.1
 * Tested up to: 5.0
 * Stable tag: 1.05
 * License: GPLv3
 * License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Plugin that implements several security measures to block, obfuscate or otherwise make more difficult for probes and automated scanners to enumerate plugins and expose any unforeseen vulnerabilities as a result.
+Plugin that implements several measures to generally improve the security of your Wordpress site. At this point security scan obfuscation of core Wordpress versions as well as plugin version enumeration are implemented.
 
 ## Want to see the plugin in action?
 
