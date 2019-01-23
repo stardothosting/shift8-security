@@ -1,11 +1,24 @@
 <?php
+
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Initialize only if enabled
 if (shift8_security_check_enabled()) {
-    add_action('init', 'shift8_security_init', 1);
-    add_action('admin_init', 'shift8_security_loaded');
+    if (shift8_security_check_options()) {
+        $shift8_options = shift8_security_check_options();
+
+        add_action('init', 'shift8_security_init', 1);
+        add_action('admin_init', 'shift8_security_loaded');
+        
+        // Implement 2FA form
+        if($shift8_options['2fa_enabled'] == 'on') {
+            add_action('login_form','shift8_security_2fa_login_field');
+            add_filter( 'authenticate', 'shift8_security_2fa_authenticate', 10, 3 );         
+        }
+    }
 }
+
+
 
 // Function to initialize & check for session 
 function shift8_security_init() {
@@ -131,6 +144,66 @@ function shift8_security_remove_wp_version_rss() {
     return '';
 }
 
+function shift8_security_2fa_login_field(){
+    $ga = new S8Sec_GoogleAuthenticator();
+    $secret = $ga->createSecret();
+    echo "Secret is: ".$secret."\n\n";
+
+    $qrCodeUrl = $ga->getQRCodeGoogleUrl('Blog', $secret);
+    echo "Google Charts URL for the QR-Code: ".$qrCodeUrl."\n\n";
+
+    $oneCode = $ga->getCode($secret);
+    echo "Checking Code '$oneCode' and Secret '$secret':\n";
+
+    $checkResult = $ga->verifyCode($secret, $oneCode, 2);    // 2 = 2*30sec clock tolerance
+    if ($checkResult) {
+        echo 'OK';
+    } else {
+        echo 'FAILED';
+    }
+    //Output your HTML
+?>
+    <p>
+        <label for="my_extra_field">Google Authenticator Code<br>
+        <input type="text" tabindex="20" size="20" value="" class="input" id="googlecode" name="shift8_security_2fa"></label>
+    </p>
+<?php
+}
+
+
+function shift8_security_2fa_authenticate( $user, $username, $password ){
+    $websiteTitle = 'Shift8 Security';
+    $ga = new S8Sec_GoogleAuthenticator();
+    $secret = $ga->createSecret();
+    //echo "Secret is: ".$secret."\n\n";
+
+    $qrCodeUrl = $ga->getQRCodeGoogleUrl('Blog', $secret);
+    //echo "Google Charts URL for the QR-Code: ".$qrCodeUrl."\n\n";
+
+    $oneCode = $ga->getCode($secret);
+    //echo "Checking Code '$oneCode' and Secret '$secret':\n";
+
+    $checkResult = $ga->verifyCode($secret, $oneCode, 2);    // 2 = 2*30sec clock tolerance
+    
+    //Get user object
+    $user = get_user_by('login', $username );
+
+    //Get POSTED value
+    $shift8_2fa_value = esc_attr($_POST['shift8_security_2fa']);
+
+    if(!$user || empty($shift8_2fa_value) || $oneCode != $shift8_2fa_value || !$checkResult){
+        //User note found, or no value entered or doesn't match stored value - don't proceed.
+        remove_action('authenticate', 'wp_authenticate_username_password', 20);
+        remove_action('authenticate', 'wp_authenticate_email_password', 20); 
+
+        //Create an error to return to user
+        return new WP_Error( 'denied', __("<strong>ERROR</strong>: You're unique identifier was invalid.") );
+    }
+
+    //Make sure you return null 
+    return null;
+}
+
 // Validate admin options
 function shift8_security_check_enabled() {
     // If enabled is not set 
@@ -143,6 +216,7 @@ function shift8_security_check_enabled() {
 function shift8_security_check_options() {
     $shift8_options = array();
     $shift8_options['core_enabled'] = esc_attr( get_option('shift8_security_enabled') );
+    $shift8_options['2fa_enabled'] = esc_attr( get_option('shift8_security_2fa_enabled') );
     $shift8_options['wpscan_basic'] = esc_attr( get_option('shift8_security_wpscan_basic') );
     $shift8_options['wpscan_eap'] = esc_attr( get_option('shift8_security_wpscan_eap') );
 

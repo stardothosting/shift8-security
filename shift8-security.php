@@ -18,7 +18,7 @@ require_once(plugin_dir_path(__FILE__).'components/functions.php' );
 require_once(plugin_dir_path(__FILE__).'components/rules.php' );
 require_once(plugin_dir_path(__FILE__).'components/S8Sec_Environment.php' );
 require_once(plugin_dir_path(__FILE__).'components/S8Sec_Rule.php' );
-
+require_once(plugin_dir_path(__FILE__).'components/S8Sec_GoogleAuthenticator.php' );
 
 // Admin welcome page
 if (!function_exists('shift8_main_page')) {
@@ -44,7 +44,8 @@ $plugin_name = $plugin_data['TextDomain'];
 ?>
 <h2 class="nav-tab-wrapper">
     <a href="?page=<?php echo $plugin_name; ?>%2Fcomponents%2Fsettings.php%2Fcustom&tab=core_options" class="nav-tab <?php echo $active_tab == 'core_options' ? 'nav-tab-active' : ''; ?>">Core Options</a>
-    <a href="?page=<?php echo $plugin_name; ?>%2Fcomponents%2Fsettings.php%2Fcustom&tab=wpscan_options" class="nav-tab <?php echo $active_tab == 'wpscan_options' ? 'nav-tab-active' : ''; ?>">WPScan Options</a>
+    <a href="?page=<?php echo $plugin_name; ?>%2Fcomponents%2Fsettings.php%2Fcustom&tab=2fa_options" class="nav-tab <?php echo $active_tab == '2fa_options' ? 'nav-tab-active' : ''; ?>">Two Factor Auth</a>
+    <a href="?page=<?php echo $plugin_name; ?>%2Fcomponents%2Fsettings.php%2Fcustom&tab=scanblock_options" class="nav-tab <?php echo $active_tab == 'scanblock_options' ? 'nav-tab-active' : ''; ?>">Scan Blocking</a>
 </h2>
 
 <form method="post" action="options.php">
@@ -52,7 +53,7 @@ $plugin_name = $plugin_data['TextDomain'];
     <?php do_settings_sections( 'shift8-security-settings-group' ); ?>
     <table class="form-table">
     <!-- CORE SETTINGS -->
-    <tbody class="<?php echo $active_tab == 'core_options' ? 'shift8-fullnav-admin-tab-active' : 'shift8-fullnav-admin-tab-inactive'; ?>">
+    <tbody class="<?php echo $active_tab == 'core_options' ? 'shift8-security-admin-tab-active' : 'shift8-security-admin-tab-inactive'; ?>">
     <tr valign="top">
     <th scope="row">Core Settings</th>
 	</tr>
@@ -76,8 +77,33 @@ $plugin_name = $plugin_data['TextDomain'];
     </label>
 	</td>
 	</tr>
+    <!-- 2FA SETTINGS -->
+    <tbody class="<?php echo $active_tab == '2fa_options' ? 'shift8-security-admin-tab-active' : 'shift8-security-admin-tab-inactive'; ?>">
+    <tr valign="top">
+    <th scope="row">Two Factor Authentication Settings</th>
+    </tr>
+    <tr valign="top">
+    <td><span id="shift8-security-notice">
+    </span></td>
+    </tr>
+    <tr valign="top">
+    <td>Enable 2FA (Free OTP) Security : </td>
+    <td>
+    <?php
+    if (esc_attr( get_option('shift8_security_2fa_enabled') ) == 'on') {
+        $enabled_2fa_checked = "checked";
+    } else {
+        $enabled_2fa_checked = "";
+    }
+    ?>
+    <label class="switch">
+    <input type="checkbox" name="shift8_security_2fa_enabled" <?php echo $enabled_2fa_checked; ?>>
+    <div class="slider round"></div>
+    </label>
+    </td>
+    </tr>
     <!-- WPSCAN OPTIONS -->
-    <tbody class="<?php echo $active_tab == 'wpscan_options' ? 'shift8-fullnav-admin-tab-active' : 'shift8-fullnav-admin-tab-inactive'; ?>">
+    <tbody class="<?php echo $active_tab == 'scanblock_options' ? 'shift8-security-admin-tab-active' : 'shift8-security-admin-tab-inactive'; ?>">
     <tr valign="top">
     <th scope="row">WPScan Options</th>
     </tr>

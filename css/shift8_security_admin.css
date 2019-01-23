@@ -80,3 +80,9 @@ input:checked + .slider:before {
 .shift8-ipintel-table td {
     width:40%;
 }
+.shift8-security-admin-tab-active {
+    display:block;
+}
+.shift8-security-admin-tab-inactive {
+    display:none;
+}

@@ -18,6 +18,7 @@ function shift8_security_create_menu() {
 function register_shift8_security_settings() {
     //register our settings
     register_setting( 'shift8-security-settings-group', 'shift8_security_enabled' );
+    register_setting( 'shift8-security-settings-group', 'shift8_security_2fa_enabled' );
     register_setting( 'shift8-security-settings-group', 'shift8_security_wpscan_basic' );
     register_setting( 'shift8-security-settings-group', 'shift8_security_wpscan_eap' );
 }
