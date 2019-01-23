@@ -3,7 +3,7 @@
  * Plugin Name: Shift8 Security
  * Plugin URI: https://github.com/stardothosting/shift8-security
  * Description: Plugin that implements several security measures to block, obfuscate or otherwise make more difficult for probes and automated scanners to enumerate plugins and expose any unforeseen vulnerabilities as a result.
- * Version: 1.00
+ * Version: 1.01
  * Author: Shift8 Web 
  * Author URI: https://www.shift8web.ca
  * License: GPLv3

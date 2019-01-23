@@ -4,7 +4,7 @@
 * Tags: security, probe, scan, wpscan, block wpscan, block scan, scanner block, block probe, 2fa, FreeOTP, FOTP
 * Requires at least: 3.0.1
 * Tested up to: 5.0
-* Stable tag: 1.05
+* Stable tag: 1.01
 * License: GPLv3
 * License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -48,3 +48,6 @@ Try clearing your cache and ensuring that the plugin is activated.
 
 ### 1.00
 * Stable version created
+
+### 1.01
+* Added functions to block WPScan, added Google Authenticator precursor code
