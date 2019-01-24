@@ -2,6 +2,33 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+// Encryption key generation
+function shift8_security_generate_secret() {
+    $encryption_key = bin2hex(openssl_random_pseudo_bytes(32));
+    return $encryption_key;
+}
+
+// Callback for key regeneration
+function shift8_security_ajax_process_request() {
+    if (wp_verify_nonce($_GET['_wpnonce'], 'shift8-security-process') && $_GET['action'] == 'shift8_security_response') {
+        $shift8_options = shift8_security_check_options();
+        if (!empty($shift8_options['2fa_description'])) {
+            $shift8_2fa = new S8Sec_2FA();
+            var_dump($shift8_options['2fa_description']);
+            //$new_secret = $shift8_2fa->generate_secret(esc_attr($shift8_options['2fa_description']));
+            echo $new_secret;
+            var_dump($new_secret);
+            die();
+        } else {
+            // To do : add error message when description field is not filled in
+            die();
+        }
+    } else {
+        die();
+    }
+}
+add_action('wp_ajax_shift8_security_response', 'shift8_security_ajax_process_request');
+
 // Initialize only if enabled
 if (shift8_security_check_enabled()) {
     if (shift8_security_check_options()) {
@@ -217,6 +244,8 @@ function shift8_security_check_options() {
     $shift8_options = array();
     $shift8_options['core_enabled'] = esc_attr( get_option('shift8_security_enabled') );
     $shift8_options['2fa_enabled'] = esc_attr( get_option('shift8_security_2fa_enabled') );
+    $shift8_options['2fa_description'] = esc_attr( get_option('shift8_security_2fa_description') );
+    $shift8_options['2fa_secret'] = esc_attr( get_option('shift8_security_2fa_secret') );
     $shift8_options['wpscan_basic'] = esc_attr( get_option('shift8_security_wpscan_basic') );
     $shift8_options['wpscan_eap'] = esc_attr( get_option('shift8_security_wpscan_eap') );
 

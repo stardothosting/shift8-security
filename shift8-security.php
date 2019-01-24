@@ -11,6 +11,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+require_once(plugin_dir_path(__FILE__).'vendor/autoload.php');
 require_once(plugin_dir_path(__FILE__).'components/enqueuing.php' );
 require_once(plugin_dir_path(__FILE__).'components/settings.php' );
 require_once(plugin_dir_path(__FILE__).'components/functions.php' );
@@ -18,4 +19,5 @@ require_once(plugin_dir_path(__FILE__).'shift8-security-rules.php' );
 require_once(plugin_dir_path(__FILE__).'components/S8Sec_Environment.php' );
 require_once(plugin_dir_path(__FILE__).'components/S8Sec_Rule.php' );
 require_once(plugin_dir_path(__FILE__).'components/S8Sec_GoogleAuthenticator.php' );
+require_once(plugin_dir_path(__FILE__).'components/S8Sec_2FA.php' );
 require_once(plugin_dir_path(__FILE__).'components/admin.php' );

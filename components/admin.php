@@ -33,6 +33,11 @@ $plugin_name = $plugin_data['TextDomain'];
     <?php settings_fields( 'shift8-security-settings-group' ); ?>
     <?php do_settings_sections( 'shift8-security-settings-group' ); ?>
     <table class="form-table">
+    <td><span id="shift8-security-notice">
+    <?php
+    settings_errors('shift8_security');
+    ?>
+    </span></td>
     <!-- CORE SETTINGS -->
     <tbody class="<?php echo $active_tab == 'core_options' ? 'shift8-security-admin-tab-active' : 'shift8-security-admin-tab-inactive'; ?>">
     <tr valign="top">
@@ -68,7 +73,7 @@ $plugin_name = $plugin_data['TextDomain'];
     </span></td>
     </tr>
     <tr valign="top">
-    <td>Enable 2FA (Free OTP) Security : </td>
+    <td>Enable 2FA Login Security : </td>
     <td>
     <?php
     if (esc_attr( get_option('shift8_security_2fa_enabled') ) == 'on') {
@@ -82,6 +87,29 @@ $plugin_name = $plugin_data['TextDomain'];
     <div class="slider round"></div>
     </label>
     </td>
+    </tr>
+    <tr valign="top">
+    <td>2FA Site Name : </td>
+    <td>
+    <?php
+    $enabled_2fa_description = esc_attr(get_option('shift8_security_2fa_description'));
+    ?>
+    <input type="text" name="shift8_security_2fa_description" value="<?php echo $enabled_2fa_description; ?>">
+    </td>
+    </tr>
+    <tr valign="top">
+    <td>2FA Secret : </td>
+    <td>
+    <?php
+    $enabled_2fa_secret = esc_attr(get_option('shift8_security_2fa_secret'));
+            $shift8_2fa = new S8Sec_2FA();
+            $new_secret = $shift8_2fa->generate_secret(esc_attr($shift8_options['2fa_description']));
+            echo $new_secret;
+            var_dump($new_secret);
+    ?>
+    <input type="text" name="shift8_security_2fa_secret" value="<?php echo $enabled_2fa_secret; ?>" id="shift8-security-secret" readonly>
+    </td>
+    <td><a id="shift8-security-secret-button" href="<?php echo wp_nonce_url( admin_url('admin-ajax.php?action=shift8_secure_ajax_process_request'), 'shift8-security-process'); ?>"><button>Generate Secret</button></a></td>
     </tr>
     <!-- WPSCAN OPTIONS -->
     <tbody class="<?php echo $active_tab == 'scanblock_options' ? 'shift8-security-admin-tab-active' : 'shift8-security-admin-tab-inactive'; ?>">

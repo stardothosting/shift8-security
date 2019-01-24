@@ -22,7 +22,18 @@ function register_shift8_security_settings() {
     register_setting( 'shift8-security-settings-group', 'shift8_security_wpscan_basic' );
     register_setting( 'shift8-security-settings-group', 'shift8_security_wpscan_eap' );
     // 2FA Settings
-    register_setting( 'shift8-security-settings-group', 'shift8_security_2fa_description' );
+    register_setting( 'shift8-security-settings-group', 'shift8_security_2fa_description', 'shift8_security_2fa_description_validate' );
     register_setting( 'shift8-security-settings-group', 'shift8_security_2fa_secret' );
 }
 
+function shift8_security_2fa_description_validate($data){
+    if(preg_match('/^[a-zA-Z]+[a-zA-Z0-9._]+$/', $data)) {
+        return $data;
+    } else {
+        add_settings_error(
+            'shift8_security',
+            'shift8-security-notice',
+            'You cannot enter special characters for the description field',
+            'error');
+    }
+}
