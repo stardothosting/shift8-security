@@ -14,10 +14,8 @@ function shift8_security_ajax_process_request() {
         $shift8_options = shift8_security_check_options();
         if (!empty($shift8_options['2fa_description'])) {
             $shift8_2fa = new S8Sec_2FA();
-            var_dump($shift8_options['2fa_description']);
-            //$new_secret = $shift8_2fa->generate_secret(esc_attr($shift8_options['2fa_description']));
-            echo $new_secret;
-            var_dump($new_secret);
+            $new_generate = $shift8_2fa->generate(esc_attr($shift8_options['2fa_description']));
+            echo $new_generate['secret'];
             die();
         } else {
             // To do : add error message when description field is not filled in

@@ -102,14 +102,24 @@ $plugin_name = $plugin_data['TextDomain'];
     <td>
     <?php
     $enabled_2fa_secret = esc_attr(get_option('shift8_security_2fa_secret'));
-            $shift8_2fa = new S8Sec_2FA();
-            $new_secret = $shift8_2fa->generate_secret(esc_attr($shift8_options['2fa_description']));
-            echo $new_secret;
-            var_dump($new_secret);
     ?>
     <input type="text" name="shift8_security_2fa_secret" value="<?php echo $enabled_2fa_secret; ?>" id="shift8-security-secret" readonly>
     </td>
     <td><a id="shift8-security-secret-button" href="<?php echo wp_nonce_url( admin_url('admin-ajax.php?action=shift8_secure_ajax_process_request'), 'shift8-security-process'); ?>"><button>Generate Secret</button></a></td>
+    </tr>
+    <tr valign="top">
+    <td>2FA QR Code : </td>
+    <td>
+    <?php
+    $enabled_2fa_description = esc_attr(get_option('shift8_security_2fa_description'));
+    $enabled_2fa_secret = esc_attr(get_option('shift8_security_2fa_secret'));
+    if (!empty($enabled_2fa_description) && !empty($enabled_2fa_secret)) {
+        $shift8_2fa = new S8Sec_2FA();
+        $generate = $shift8_2fa->generate($enabled_2fa_secret);
+        echo "<img src='" . $generate['qr_img'] . "'>";
+    }
+    ?>
+    </td>
     </tr>
     <!-- WPSCAN OPTIONS -->
     <tbody class="<?php echo $active_tab == 'scanblock_options' ? 'shift8-security-admin-tab-active' : 'shift8-security-admin-tab-inactive'; ?>">

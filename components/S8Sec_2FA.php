@@ -14,21 +14,19 @@ class S8Sec_2FA
 
 	public $shift8_2fa_secret;
 	public $shift8_2fa_qr;
+	public $secretFactory;
 
-	function generate_secret($name) {
-		var_dump($name);
-		var_dump(wp_salt('auth'));
-		exit(0);
-		die();
-    	$secretFactory = new \Dolondro\GoogleAuthenticator\SecretFactory();
-    	$secret = $secretFactory->create($name, wp_salt('auth'));
-    	$shift8_2fa_secret = $secret->getSecretKey();
-    	return $shift8_2fa_secret;
+	function generate($name) {
+		$site_hostname = parse_url(get_site_url());
+    	$this->secretFactory = new \Dolondro\GoogleAuthenticator\SecretFactory();
+    	$this->secret = $this->secretFactory->create($name, $site_hostname);
+    	$this->shift8_2fa_secret = $this->secret->getSecretKey();
+
+    	$qrImageGenerator = new \Dolondro\GoogleAuthenticator\QrImageGenerator\EndroidQrImageGenerator();
+    	$this->shift8_2fa_qr = $qrImageGenerator->generateUri($this->secret);
+    	return array(
+    		'secret' => $this->shift8_2fa_secret,
+    		'qr_img' => $this->shift8_2fa_qr,
+    	);
 	}
-
-	function generate_qr() {
-		$qrImageGenerator = new \Dolondro\GoogleAuthenticator\QrImageGenerator\EndroidQrImageGenerator();
-		$shift8_2fa_qr = $qrImageGenerator->generateUri($shift8_2fa_secret);
-	}
-
 }
