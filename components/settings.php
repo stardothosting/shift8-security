@@ -21,5 +21,8 @@ function register_shift8_security_settings() {
     register_setting( 'shift8-security-settings-group', 'shift8_security_2fa_enabled' );
     register_setting( 'shift8-security-settings-group', 'shift8_security_wpscan_basic' );
     register_setting( 'shift8-security-settings-group', 'shift8_security_wpscan_eap' );
+    // 2FA Settings
+    register_setting( 'shift8-security-settings-group', 'shift8_security_2fa_description' );
+    register_setting( 'shift8-security-settings-group', 'shift8_security_2fa_secret' );
 }
 
