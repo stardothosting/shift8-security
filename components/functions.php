@@ -14,8 +14,8 @@ function shift8_security_ajax_process_request() {
         $shift8_options = shift8_security_check_options();
         if (!empty($shift8_options['2fa_description'])) {
             $shift8_2fa = new S8Sec_2FA();
-            $new_generate = $shift8_2fa->generate(esc_attr($shift8_options['2fa_description']));
-            echo $new_generate['secret'];
+            $new_generate = $shift8_2fa->generate();
+            echo $new_generate;
             die();
         } else {
             // To do : add error message when description field is not filled in
@@ -37,8 +37,8 @@ if (shift8_security_check_enabled()) {
         
         // Implement 2FA form
         if($shift8_options['2fa_enabled'] == 'on') {
-            add_action('login_form','shift8_security_2fa_login_field');
-            add_filter( 'authenticate', 'shift8_security_2fa_authenticate', 10, 3 );         
+            //add_action('login_form','shift8_security_2fa_login_field');
+            //add_filter( 'authenticate', 'shift8_security_2fa_authenticate', 10, 3 );         
         }
     }
 }
@@ -170,22 +170,6 @@ function shift8_security_remove_wp_version_rss() {
 }
 
 function shift8_security_2fa_login_field(){
-    $ga = new S8Sec_GoogleAuthenticator();
-    $secret = $ga->createSecret();
-    echo "Secret is: ".$secret."\n\n";
-
-    $qrCodeUrl = $ga->getQRCodeGoogleUrl('Blog', $secret);
-    echo "Google Charts URL for the QR-Code: ".$qrCodeUrl."\n\n";
-
-    $oneCode = $ga->getCode($secret);
-    echo "Checking Code '$oneCode' and Secret '$secret':\n";
-
-    $checkResult = $ga->verifyCode($secret, $oneCode, 2);    // 2 = 2*30sec clock tolerance
-    if ($checkResult) {
-        echo 'OK';
-    } else {
-        echo 'FAILED';
-    }
     //Output your HTML
 ?>
     <p>
@@ -197,18 +181,8 @@ function shift8_security_2fa_login_field(){
 
 
 function shift8_security_2fa_authenticate( $user, $username, $password ){
-    $websiteTitle = 'Shift8 Security';
-    $ga = new S8Sec_GoogleAuthenticator();
-    $secret = $ga->createSecret();
-    //echo "Secret is: ".$secret."\n\n";
 
-    $qrCodeUrl = $ga->getQRCodeGoogleUrl('Blog', $secret);
-    //echo "Google Charts URL for the QR-Code: ".$qrCodeUrl."\n\n";
-
-    $oneCode = $ga->getCode($secret);
-    //echo "Checking Code '$oneCode' and Secret '$secret':\n";
-
-    $checkResult = $ga->verifyCode($secret, $oneCode, 2);    // 2 = 2*30sec clock tolerance
+    $shift8_2fa = new S8Sec_2FA();
     
     //Get user object
     $user = get_user_by('login', $username );
@@ -216,7 +190,16 @@ function shift8_security_2fa_authenticate( $user, $username, $password ){
     //Get POSTED value
     $shift8_2fa_value = esc_attr($_POST['shift8_security_2fa']);
 
-    if(!$user || empty($shift8_2fa_value) || $oneCode != $shift8_2fa_value || !$checkResult){
+    //exit(0);
+    //die();
+
+    echo "<center><img src='" . $shift8_2fa->generate_qr() . "'></center>";
+    var_dump($shift8_2fa->generate_qr());
+    //var_dump($shift8_2fa->validate_code($shift8_2fa_value));
+    //var_dump($shift8_2fa_gen['secret']);
+
+
+    if(!$user || empty($shift8_2fa_value) || $oneCode != $shift8_2fa_value || empty($oneCode)){
         //User note found, or no value entered or doesn't match stored value - don't proceed.
         remove_action('authenticate', 'wp_authenticate_username_password', 20);
         remove_action('authenticate', 'wp_authenticate_email_password', 20); 

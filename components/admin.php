@@ -115,8 +115,8 @@ $plugin_name = $plugin_data['TextDomain'];
     $enabled_2fa_secret = esc_attr(get_option('shift8_security_2fa_secret'));
     if (!empty($enabled_2fa_description) && !empty($enabled_2fa_secret)) {
         $shift8_2fa = new S8Sec_2FA();
-        $generate = $shift8_2fa->generate($enabled_2fa_secret);
-        echo "<img src='" . $generate['qr_img'] . "'>";
+        $generate_qr = $shift8_2fa->generate_qr();
+        echo "<img src='" . $generate . "'>";
     }
     ?>
     </td>

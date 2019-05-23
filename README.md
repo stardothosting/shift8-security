@@ -3,7 +3,7 @@
 * Donate link: https://www.shift8web.ca
 * Tags: security, probe, scan, wpscan, block wpscan, block scan, scanner block, block probe, 2fa, FreeOTP, FOTP
 * Requires at least: 3.0.1
-* Tested up to: 5.0
+* Tested up to: 5.0.2
 * Stable tag: 1.01
 * License: GPLv3
 * License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -16,7 +16,6 @@ You can view three example sites where this plugin is live :
 
 - Example Site 1 : [Wordpress Hosting](https://www.stackstar.com "Wordpress Hosting")
 - Example Site 2 : [Web Design in Toronto](https://www.shift8web.ca "Web Design in Toronto")
-- Example Site 3 : [Dope Mail](https://dopemail.com "Buy Weed Online")
 
 To read more about how this plugin works, please read our [blog post detailing how it works](https://www.shift8web.ca/2019/01/how-to-block-your-wordpress-site-from-being-scanned-by-wpscan-with-nginx/ "Toronto Website design")
 ## Features

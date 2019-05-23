@@ -69,6 +69,8 @@ class QrCode implements QrCodeInterface
 
         $this->errorCorrectionLevel = new ErrorCorrectionLevel(ErrorCorrectionLevel::LOW);
         $this->labelAlignment = new LabelAlignment(LabelAlignment::CENTER);
+
+        $this->createWriterRegistry();
     }
 
     public function setText(string $text): void
@@ -107,6 +109,10 @@ class QrCode implements QrCodeInterface
             $foregroundColor['a'] = 0;
         }
 
+        foreach ($foregroundColor as &$color) {
+            $color = intval($color);
+        }
+
         $this->foregroundColor = $foregroundColor;
     }
 
@@ -119,6 +125,10 @@ class QrCode implements QrCodeInterface
     {
         if (!isset($backgroundColor['a'])) {
             $backgroundColor['a'] = 0;
+        }
+
+        foreach ($backgroundColor as &$color) {
+            $color = intval($color);
         }
 
         $this->backgroundColor = $backgroundColor;
@@ -285,10 +295,6 @@ class QrCode implements QrCodeInterface
 
     public function getWriter(string $name = null): WriterInterface
     {
-        if (!$this->writerRegistry instanceof WriterRegistryInterface) {
-            $this->createWriterRegistry();
-        }
-
         if (!is_null($name)) {
             return $this->writerRegistry->getWriter($name);
         }
