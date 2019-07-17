@@ -1,6 +1,4 @@
 {
     "require": {
-        "Dolondro/google-authenticator": "^2.0",
-        "endroid/qr-code": "^3.5"
     }
 }
